@@ -1,0 +1,78 @@
+body {
+    display: flex;
+    font-family: Arial, sans-serif;
+}
+
+/* Barre latérale */
+.sidebar {
+    width: 150px;
+    height: 100vh;
+    background: #343a40;
+    color: white;
+    position: fixed;
+    transition: 0.3s;
+    padding-top: 20px;
+}
+h3{
+	font-size: 1.rem important;
+}
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #212529;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 15px;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.sidebar ul li a:hover {
+    background: #495057;
+}
+
+/* Contenu principal */
+#content {
+    margin-left: 150px;
+    flex-grow: 1;
+    padding: 20px;
+    transition: 0.3s;
+}
+table{
+	min-width: 700px;
+}
+.card{
+    overflow: scroll;
+}
+ form{
+ 	width: 300px
+ }
+/* Barre du haut */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Cacher la sidebar en mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        overflow: hidden;
+    }
+    #content {
+        margin-left: 0;
+    }
+}
