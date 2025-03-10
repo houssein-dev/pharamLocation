@@ -80,9 +80,12 @@ response.setHeader("Expires", "0");
         response.sendRedirect("auth/connect.jsp");
         return;
     }
+    Integer pharmacieId=0;
     Utilisateur utilisateur;
     if (sessionUser.getAttribute("utilisateur") == null){
     	utilisateur = (Pharmacien) sessionUser.getAttribute("pharmacien") ;
+    	 pharmacieId = (Integer) sessionUser.getAttribute("pharmacieId");
+
     }else{
 		 utilisateur=(Utilisateur) sessionUser.getAttribute("utilisateur");
 	}
@@ -93,6 +96,15 @@ response.setHeader("Expires", "0");
 	    <div class="card-body d-flex justify-content-between align-items-center">
 	        <h3 class="user-name mb-0">Bienvenue, monsieur <strong><%= utilisateur.getRole()%> </strong> <%= utilisateur.getNom()%>  !</h3>
 	        <a href="logout" class="btn btn-outline-danger btn-sm">Déconnexion</a>
+	    
+	        <%  
+					if (sessionUser.getAttribute("utilisateur") != null  || utilisateur.getRole()=="admin") { 
+						%>
+						        <a class=" btn btn-sm btn-outline-success" href="/PharmLocation/medicament">Dashboard</a>
+						<%  
+					} 
+			%>
+	    
 	    </div>
 	</div>
 
@@ -104,13 +116,22 @@ response.setHeader("Expires", "0");
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/PharmLocation/main">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link btn  btn-outline-success" href="/PharmLocation/main">Accueil</a></li>
                     <!--  <li class="nav-item"><a class="nav-link" href="#">Pharmacies</a></li>-->
                      <%  
 						    if (sessionUser.getAttribute("pharmacien") != null) { 
 						%>
 						    <li class="nav-item">
-						        <a class="nav-link btn btn-outline-dark" href="medicament/ajouterMedicament.jsp">Ajouter un Médicament</a>
+						        <a class="nav-link btn btn-outline-success" href="/PharmLocation/medicament/ajouterMedicament.jsp">Ajouter un Médicament</a>
+						    </li>
+						<%  
+						    } 
+						%>
+						                     <%  
+						    if (sessionUser.getAttribute("pharmacien") != null ) { 
+						%>
+						    <li class="nav-item">
+						        <a class="nav-link btn  btn-outline-success" href="/PharmLocation/stock?pharmacieId=<%=pharmacieId %>">mon pharmacie</a>
 						    </li>
 						<%  
 						    } 
@@ -138,18 +159,26 @@ response.setHeader("Expires", "0");
     </header>
     
     <section class="container my-5">
-        <h2 class="text-center mb-4">Dernières Annonces</h2>
-        <div class="row">
+        <h2 class="text-center mb-4">Dernières medicament</h2>
+        <div class="row"  style="
+		    margin-left: auto;
+		    margin-right: auto;
+		">
             <% List<Medicament> medicaments = (List<Medicament>) request.getAttribute("medicaments");
                if (medicaments != null) {
                    for (Medicament m : medicaments) { %>
             <div class="col-md-4">
-                <div class="card">
-                    <img src="" class="card-img-top img-fluid" alt="Image Médicament">
+                <div class="card" style="
+					    margin-top: 12px;
+					">
+                    <img src="assets/images/medical.jpg" class="card-img-top img-fluid" alt="Image Médicament" style="
+					    height: 280px;
+					    border: 1px solid #adb5bd8f;
+					">
                     <div class="card-body text-center">
                         <h5 class="card-title"><%= m.getNom() %></h5>
-                        <p class="card-text">Prix: <%= m.getPrix() %> €</p>
-                        <a href="#" class="btn btn-success">Voir Détails</a>
+                        <p class="card-text">Prix: <%= m.getPrix() %> MRO</p>
+                        <a href="/PharmLocation/stock?medicamentId=<%= m.getId() %>" class="btn btn-success">Voir Détails</a>
                     </div>
                 </div>
             </div>
@@ -164,11 +193,16 @@ response.setHeader("Expires", "0");
                if (pharmacies != null) {
                    for (Pharmacie p : pharmacies) { %>
             <div class="col-md-4">
-                <div class="card">
+                <div class="card" style="
+					    margin-top: 12px;
+					">
+                        <img src="assets/images/pharmacy.jpg" class="card-img-top img-fluid" alt="Image Médicament" style="
+					    height: 280px;
+					    border: 1px solid #adb5bd8f;
+					">
                     <div class="card-body text-center">
                         <h5 class="card-title"><%= p.getNom() %></h5>
                         <p class="card-text">Adresse: <%= p.getAdresse() %></p>
-                        <a href="#" class="btn btn-success">Voir Détails</a>
                     </div>
                 </div>
             </div>

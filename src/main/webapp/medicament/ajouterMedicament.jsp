@@ -83,6 +83,7 @@
     </style>
 </head>
 <body>
+
 <%
 response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); 
 response.setHeader("Pragma", "no-cache"); 
@@ -93,12 +94,15 @@ response.setHeader("Expires", "0");
     if (sessionUser == null || sessionUser.getAttribute("utilisateur") == null && sessionUser.getAttribute("pharmacien") == null) {
     	
     	
-        response.sendRedirect("auth/login.jsp");
+        response.sendRedirect("auth/connect.jsp");
         return;
     }
+    Integer pharmacieId=0;
     Utilisateur utilisateur;
     if (sessionUser.getAttribute("utilisateur") == null){
     	utilisateur = (Pharmacien) sessionUser.getAttribute("pharmacien") ;
+    	 pharmacieId = (Integer) sessionUser.getAttribute("pharmacieId");
+
     }else{
 		 utilisateur=(Utilisateur) sessionUser.getAttribute("utilisateur");
 	}
@@ -107,12 +111,21 @@ response.setHeader("Expires", "0");
 %>
 	<div class="user-info card shadow-sm mb-4">
 	    <div class="card-body d-flex justify-content-between align-items-center">
-	        <h3 class="user-name mb-0">Bienvenue, <%= utilisateur.getNom() %> !</h3>
+	        <h3 class="user-name mb-0">Bienvenue, monsieur <strong><%= utilisateur.getRole()%> </strong> <%= utilisateur.getNom()%>  !</h3>
 	        <a href="logout" class="btn btn-outline-danger btn-sm">Déconnexion</a>
+	    
+	        <%  
+					if (sessionUser.getAttribute("utilisateur") != null  || utilisateur.getRole()=="admin") { 
+						%>
+						        <a class=" btn btn-sm btn-outline-success" href="/PharmLocation/medicament">Dashboard</a>
+						<%  
+					} 
+			%>
+	    
 	    </div>
 	</div>
-	
-	    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="#">PharmaLocation</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -120,22 +133,31 @@ response.setHeader("Expires", "0");
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/PharmLocation/main">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Pharmacies</a></li>
-
+                    <li class="nav-item"><a class="nav-link btn  btn-outline-success" href="/PharmLocation/main">Accueil</a></li>
+                    <!--  <li class="nav-item"><a class="nav-link" href="#">Pharmacies</a></li>-->
                      <%  
 						    if (sessionUser.getAttribute("pharmacien") != null) { 
 						%>
 						    <li class="nav-item">
-						        <a class="nav-link btn btn-outline-light" href="medicament/ajouterMedicament.jsp">Ajouter un Médicament</a>
+						        <a class="nav-link btn btn-outline-success" href="/PharmLocation/medicament/ajouterMedicament.jsp">Ajouter un Médicament</a>
 						    </li>
 						<%  
 						    } 
-						%>                </ul>
+						%>
+						                     <%  
+						    if (sessionUser.getAttribute("pharmacien") != null ) { 
+						%>
+						    <li class="nav-item">
+						        <a class="nav-link btn  btn-outline-success" href="/PharmLocation/stock?pharmacieId=<%=pharmacieId %>">mon pharmacie</a>
+						    </li>
+						<%  
+						    } 
+						%>
+
+                </ul>
             </div>
         </div>
     </nav>
-    
 
 <div class="container my-5">
     <h2 class="text-center mb-4">Ajouter un Médicament</h2>
@@ -164,7 +186,7 @@ response.setHeader("Expires", "0");
             <input type="number" step="0.01" id="prix" name="prix" class="form-control" required>
         </div>
         <div class="text-center">
-            <input type="submit" value="Ajouter" class="btn btn-primary">
+            <input type="submit" value="Ajouter" class="btn btn-success">
         </div>
     </form>
 </div>

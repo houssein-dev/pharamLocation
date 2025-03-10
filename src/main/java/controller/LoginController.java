@@ -61,7 +61,7 @@ public class LoginController extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("pharmacien", pharmacien);
                 session.setAttribute("role", pharmacien.getRole());
-
+                session.setAttribute("pharmacieId", pharmacien.getPharmacie().getId());
                 //session.setAttribute("roel", "pharmacien");
         	    request.getRequestDispatcher("/main").forward(request, response);
         	    System.out.println("pharmacien exist");

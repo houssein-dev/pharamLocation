@@ -97,9 +97,15 @@ if (sessionUser.getAttribute("utilisateur") == null){
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="#">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Pharmacies</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-outline-dark" href="medicament/ajouterMedicament.jsp">Ajouter un Médicament</a></li>
-                </ul>
+                     <%  
+						    if (sessionUser.getAttribute("pharmacien") != null) { 
+						%>
+						    <li class="nav-item">
+						        <a class="nav-link btn btn-outline-dark" href="medicament/ajouterMedicament.jsp">Ajouter un Médicament</a>
+						    </li>
+						<%  
+						    } 
+						%>                </ul>
             </div>
         </div>
     </nav>
@@ -128,11 +134,13 @@ if (sessionUser.getAttribute("utilisateur") == null){
                    for (Medicament m : medicaments) { %>
             <div class="col-md-4">
                 <div class="card">
-                    <img src="" class="card-img-top img-fluid" alt="Image Médicament">
-                    <div class="card-body text-center">
+                    <img src="assets/images/medical.jpg" class="card-img-top img-fluid" alt="Image Médicament" style="
+					    height: 280px;
+					    border: 1px solid #adb5bd8f;
+					">                    <div class="card-body text-center">
                         <h5 class="card-title"><%= m.getNom() %></h5>
                         <p class="card-text">Prix: <%= m.getPrix() %> €</p>
-                        <a href="#" class="btn btn-success">Voir Détails</a>
+                        <a href="/PharmLocation/stock?medicamentId=<%= m.getId() %>" class="btn btn-success">Voir Détails</a>
                     </div>
                 </div>
             </div>

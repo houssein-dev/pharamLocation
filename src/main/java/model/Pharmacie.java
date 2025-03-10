@@ -7,11 +7,11 @@ public class Pharmacie {
     private String nom;
     private String adresse;
     private String coordonneesGPS;
-    private List<Medicament> stock;
+    private List<Stock> stock;
 
     public Pharmacie() {}
 
-    public Pharmacie(int id, String nom, String adresse, String coordonneesGPS, List<Medicament> stock) {
+    public Pharmacie(int id, String nom, String adresse, String coordonneesGPS, List<Stock> stock) {
         this.id = id;
         this.nom = nom;
         this.adresse = adresse;
@@ -40,6 +40,8 @@ public class Pharmacie {
     public void setAdresse(String adresse) { this.adresse = adresse; }
     public String getCoordonneesGPS() { return coordonneesGPS; }
     public void setCoordonneesGPS(String coordonneesGPS) { this.coordonneesGPS = coordonneesGPS; }
-    public List<Medicament> getStock() { return stock; }
-    public void setStock(List<Medicament> stock) { this.stock = stock; }
+
+
+    public List<Stock> getStock() { return stock; }
+    public void setStock(List<Stock> stock) { this.stock = stock; }
 }
