@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="java.util.*, model.Medicament" %>
+<%@ page import="java.util.*, model.Medicament, model.Pharmacie,model.Pharmacien, model.Utilisateur" %>
+
 <jsp:useBean id="medicaments" class="java.util.ArrayList" scope="session"/>
 
 <html lang="fr">
@@ -20,7 +22,6 @@
             <h3>PharmaLocator</h3>
         </div>
         <ul class="list-unstyled components">
-            <li><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
              <li><a href="/PharmLocation/utilisateur"><i class="fas fa-users"></i> Utilisateurs</a></li>
             <li><a href="/PharmLocation/medicament"><i class="fas fa-pills"></i> Médicaments</a></li>
         	<li><a href="/PharmLocation/pharmacie"><i class="fas fa-hospital"></i> Pharmacies</a></li>
@@ -36,11 +37,37 @@
     <!-- Contenu principal -->
     <div id="content">
         <!-- Top Bar -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Top Bar -->
+        <%
+			response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); 
+			response.setHeader("Pragma", "no-cache"); 
+			response.setHeader("Expires", "0"); 
+			%>
+			<%
+			    HttpSession sessionUser = request.getSession(false);
+			    if (sessionUser == null || sessionUser.getAttribute("utilisateur") == null) {
+			    	
+			    	
+			        response.sendRedirect("auth/connect.jsp");
+			        return;
+			    }
+			    Utilisateur utilisateur;
+
+				utilisateur=(Utilisateur) sessionUser.getAttribute("utilisateur");
+			
+			
+			
+			%>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="
+		    background: #dee2e6 !important;!i;!;
+		    padding-left: 12px;
+		    padding-right: 12px;
+		    
+		">
             <button id="sidebarCollapse" class="btn btn-primary">☰</button>
             <div class="ms-auto">
-                <span class="me-3">Bienvenue, Admin</span>
-                <img src="https://via.placeholder.com/40" class="rounded-circle" alt="User">
+                <span class="me-3">Bienvenue, <%=utilisateur.getNom()  %>-<%=utilisateur.getRole()  %></span>
+            <img src="assets/images/download (1).png" class="rounded-circle" alt="User" style="max-height:70px;">
             </div>
         </nav>
 

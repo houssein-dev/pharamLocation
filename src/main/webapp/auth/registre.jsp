@@ -5,13 +5,38 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <title>Inscription - PharmaLocator</title>
+    <title>ajou medicament</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .form-radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .form-radio-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-radio-item input[type="radio"] {
+            margin: 0;
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .form-radio-item label {
+            margin: 0;
+            font-size: 14px;
+            color: #000;
+        }
+    </style>
 </head>
 <body>
     <section class="ftco-section">
@@ -19,7 +44,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-7 col-lg-5">
                     <div class="wrap">
-                        <div class="img" style="background-image: url(assets/images/bg-1.jpg);"></div>
+						<div class="img" style="background-image: url(assets/images/pharmacy.jpg);"></div>
                         <div class="login-wrap p-4 p-md-5">
                             <div class="d-flex">
                             </div>
@@ -47,12 +72,20 @@
                                     <label class="form-control-placeholder" for="password">Mot de passe</label>
                                     <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                                 </div>
-                                  <input type="radio" id="option1" name="role" value="1">
-								  <label for="option1">utilisateur</label>
-								
-								  <input type="radio" id="option2" name="role" value="2">
-								  <label for="option2">pharmacien</label>
-								                                
+                                
+                                <div class="form-group">
+                                    <div class="form-radio-group">
+                                        <div class="form-radio-item">
+                                            <input type="radio" id="option1" name="role" value="1" required>
+                                            <label for="option1">Utilisateur</label>
+                                        </div>
+                                        <div class="form-radio-item">
+                                            <input type="radio" id="option2" name="role" value="2" required>
+                                            <label for="option2">Pharmacien</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="form-group">
                                     <button type="submit" class="form-control btn btn-primary rounded submit px-3">S'inscrire</button>
                                 </div>

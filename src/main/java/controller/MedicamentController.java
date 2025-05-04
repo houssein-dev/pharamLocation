@@ -81,7 +81,7 @@ public class MedicamentController extends HttpServlet {
 	        Medicament medicament = new Medicament(0, nom, dosage, laboratoire, disponibilite, prix);
 	        try {
 	            medicamentDAO.create(medicament);
-	            response.sendRedirect("/PharmLocation/medicament");
+	            response.sendRedirect("/PharmLocation/auth");
 	        } catch (SQLException e) {
 	            throw new ServletException("Erreur lors de l'ajout du médicament", e);
 	        }

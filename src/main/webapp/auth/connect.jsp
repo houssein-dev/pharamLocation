@@ -23,7 +23,7 @@
 			<div class="row justify-content-center">
 				<div class="col-md-7 col-lg-5">
 					<div class="wrap">
-						<div class="img" style="background-image: url(assets/images/bg-1.jpg);"></div>
+						<div class="img" style="background-image: url(assets/images/pharmacy.jpg);"></div>
 						<div class="login-wrap p-4 p-md-5">
 			      	<div class="d-flex">
 			      	</div>
@@ -40,7 +40,7 @@
 			            <div class="form-group">
 			            	<button type="submit" class="form-control btn btn-primary rounded submit px-3">se connect</button>
 			            </div>
-							<p><a href="/PharmLocation/auth/registre.jsp">Créer un compte</a></p>
+							<p><a href="/PharmLocation//inscription">Créer un compte</a></p>
 							<% if (request.getAttribute("error") != null) { %>
 							    <p style="color: red;"><%= request.getAttribute("error") %></p>
 							<% } %>		            	

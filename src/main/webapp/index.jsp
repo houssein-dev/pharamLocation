@@ -83,7 +83,7 @@ response.setHeader("Expires", "0");
     Integer pharmacieId=0;
     Utilisateur utilisateur;
     if (sessionUser.getAttribute("utilisateur") == null){
-    	utilisateur = (Pharmacien) sessionUser.getAttribute("pharmacien") ;
+    	 utilisateur = (Pharmacien) sessionUser.getAttribute("pharmacien") ;
     	 pharmacieId = (Integer) sessionUser.getAttribute("pharmacieId");
 
     }else{
@@ -94,16 +94,18 @@ response.setHeader("Expires", "0");
 %>
 	<div class="user-info card shadow-sm mb-4">
 	    <div class="card-body d-flex justify-content-between align-items-center">
-	        <h3 class="user-name mb-0">Bienvenue, monsieur <strong><%= utilisateur.getRole()%> </strong> <%= utilisateur.getNom()%>  !</h3>
+	        <h3 class="user-name mb-0">Bienvenue, monsieur <strong><%=sessionUser.getAttribute("role")%> </strong> <%= utilisateur.getNom()%>  !</h3>
 	        <a href="logout" class="btn btn-outline-danger btn-sm">Déconnexion</a>
 	    
 	        <%  
-					if (sessionUser.getAttribute("utilisateur") != null  || utilisateur.getRole()=="admin") { 
+					if (sessionUser.getAttribute("utilisateur") != null  && sessionUser.getAttribute("role")=="admin") { 
 						%>
 						        <a class=" btn btn-sm btn-outline-success" href="/PharmLocation/medicament">Dashboard</a>
 						<%  
 					} 
+	        System.out.printf("from index",utilisateur.getRole());
 			%>
+			
 	    
 	    </div>
 	</div>
