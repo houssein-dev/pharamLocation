@@ -1,4 +1,9 @@
 eclipse.preferences.version=1
 encoding//src/main/webapp/index.jsp=UTF-8
 encoding//src/main/webapp/pharmacien/pharmacienList.jsp=UTF-8
+encoding//src/main/webapp/views/pages/acceuil.jsp=UTF-8
+encoding//src/main/webapp/views/pages/dashboard/dashboard.jsp=UTF-8
+encoding//src/main/webapp/views/pages/dashboard/pharmacie.jsp=UTF-8
+encoding//src/main/webapp/views/pages/dashboard/pharmacien.jsp=UTF-8
+encoding//src/main/webapp/views/pages/dashboard/utilisateurs.jsp=UTF-8
 encoding/<project>=UTF-8

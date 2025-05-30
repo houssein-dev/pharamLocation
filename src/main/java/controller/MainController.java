@@ -38,24 +38,29 @@ public class MainController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Récupération des médicaments
+        List<Medicament> medicaments = null;
+		try {
+			medicaments = medicamentDAO.getAll();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        request.setAttribute("medicaments", medicaments);
 
-        try {
+        // Récupération des pharmacies
+        List<Pharmacie> pharmacies = null;
+		try {
+			pharmacies = pharmacieDAO.getAll();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        request.setAttribute("pharmacies", pharmacies);
 
-                List<Medicament> medicaments = medicamentDAO.getAll();
-                List<Pharmacie> pharmacies = pharmacieDAO.getAll();
-                
-                
-                request.setAttribute("medicaments", medicaments);
-                request.setAttribute("pharmacies", pharmacies);
-                
-                
-                request.getRequestDispatcher("index.jsp").forward(request, response);
-            
-        } catch (SQLException e) {
-            throw new ServletException("Erreur lors de la récupération des médicaments ou pharamaies", e);
-        }
-    }
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Redirection vers la page d'accueil
+        request.getRequestDispatcher("./index.jsp").forward(request, response);
+    }    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
     }
 }

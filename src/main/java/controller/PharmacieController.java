@@ -2,7 +2,6 @@ package controller;
 
 import dao.PharmacieDAO;
 import model.Pharmacie;
-import model.Medicament;
 import util.DBConnection;
 
 import jakarta.servlet.ServletException;
@@ -10,7 +9,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,7 +24,7 @@ public class PharmacieController extends HttpServlet {
             Connection connection = DBConnection.getConnection();
             pharmacieDAO = new PharmacieDAO(connection);
         } catch (SQLException e) {
-            throw new ServletException("Erreur de connexion à la base de données", e);
+            throw new ServletException("Erreur d'initialisation de la base de données", e);
         }
     }
 
@@ -39,11 +37,11 @@ public class PharmacieController extends HttpServlet {
                 int id = Integer.parseInt(idParam);
                 Pharmacie pharmacie = pharmacieDAO.read(id);
                 request.setAttribute("pharmacie", pharmacie);
-                request.getRequestDispatcher("pharmacie/pharmacieDetail.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/pages/dashboard/pharmacieDetail.jsp").forward(request, response);
             } else {
                 List<Pharmacie> pharmacies = pharmacieDAO.getAll();
                 request.setAttribute("pharmacies", pharmacies);
-                request.getRequestDispatcher("pharmacie/pharmacieList.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/pages/dashboard/pharmacie.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             throw new ServletException("Erreur lors de la récupération des pharmacies", e);
@@ -52,14 +50,28 @@ public class PharmacieController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String method = request.getParameter("_method");
+        
+        if ("PUT".equalsIgnoreCase(method)) {
+            doPut(request, response);
+        } else if ("DELETE".equalsIgnoreCase(method)) {
+            doDelete(request, response);
+        } else {
+            createPharmacie(request, response);
+        }
+    }
+
+    private void createPharmacie(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String nom = request.getParameter("nom");
         String adresse = request.getParameter("adresse");
         String coordonneesGPS = request.getParameter("coordonneesGPS");
+        String logoUrl = request.getParameter("logoUrl");
 
-        Pharmacie pharmacie = new Pharmacie(0, nom, adresse, coordonneesGPS, null);
+        Pharmacie pharmacie = new Pharmacie(0, nom, adresse, coordonneesGPS, null, logoUrl);
+        
         try {
             pharmacieDAO.create(pharmacie);
-            response.sendRedirect("/PharmLocation/pharmacie");
+            response.sendRedirect(request.getContextPath() + "/pharmacie");
         } catch (SQLException e) {
             throw new ServletException("Erreur lors de l'ajout de la pharmacie", e);
         }
@@ -71,11 +83,13 @@ public class PharmacieController extends HttpServlet {
         String nom = request.getParameter("nom");
         String adresse = request.getParameter("adresse");
         String coordonneesGPS = request.getParameter("coordonneesGPS");
+        String logoUrl = request.getParameter("logoUrl");
 
-        Pharmacie pharmacie = new Pharmacie(id, nom, adresse, coordonneesGPS, null);
+        Pharmacie pharmacie = new Pharmacie(id, nom, adresse, coordonneesGPS, null, logoUrl);
+        
         try {
             pharmacieDAO.update(pharmacie);
-            response.sendRedirect("/PharmLocation/pharmacie");
+            response.sendRedirect(request.getContextPath() + "/pharmacie");
         } catch (SQLException e) {
             throw new ServletException("Erreur lors de la mise à jour de la pharmacie", e);
         }
@@ -84,9 +98,10 @@ public class PharmacieController extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
+        
         try {
             pharmacieDAO.delete(id);
-            response.sendRedirect("/PharmLocation/pharmacie");
+            response.sendRedirect(request.getContextPath() + "/pharmacie");
         } catch (SQLException e) {
             throw new ServletException("Erreur lors de la suppression de la pharmacie", e);
         }

@@ -73,33 +73,28 @@ public class PharmacienDAO {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmalocator", "root", "");
         }
 
-
         String sql = "SELECT * FROM pharmacien WHERE email = ? AND password = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, email);
             stmt.setString(2, password);
             try (ResultSet rs = stmt.executeQuery()) {
-
                 if (rs.next()) {
-                    // Récupérer la pharmacie associée si elle existe
                     int pharmacieId = rs.getInt("pharmacie_id");
-                    Pharmacie pharmacie = new PharmacieDAO(connection).read(pharmacieId);
-
+                    Pharmacie pharmacie = new Pharmacie(pharmacieId, ""); 
+                    
                     return new Pharmacien(
-                            rs.getInt("id"),
-                            rs.getString("nom"),
-                            rs.getString("email"),
-                            rs.getString("telephone"),
-                            rs.getString("adresse"),
-                            rs.getString("password"),
-                            rs.getString("role"),
-
-                            pharmacie
+                        rs.getInt("id"),
+                        rs.getString("nom"),
+                        rs.getString("email"),
+                        rs.getString("telephone"),
+                        rs.getString("adresse"),
+                        rs.getString("password"),
+                        pharmacie
                     );
                 }
             }
         }
-        return null; // Aucun pharmacien trouvé
+        return null;
     }
 
 

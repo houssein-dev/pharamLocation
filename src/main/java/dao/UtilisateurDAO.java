@@ -48,7 +48,8 @@ public class UtilisateurDAO {
                         rs.getString("email"),
                         rs.getString("telephone"),
                         rs.getString("adresse"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        rs.getString("role")
                 );
             }
         }
@@ -57,9 +58,14 @@ public class UtilisateurDAO {
 
     // UPDATE - Modifier un utilisateur
     public void update(Utilisateur utilisateur) throws SQLException {
-    	if (connection == null || connection.isClosed()) {
-    		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmalocator", "root", "");
-    	}
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmalocator", "root", "");
+        }
+        System.out.println("===============================");
+
+        System.out.println(utilisateur.getRole());
+        System.out.println("===============================");
+
         String sql = "UPDATE utilisateur SET nom = ?, email = ?, telephone = ?, adresse = ?, password = ?, role = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, utilisateur.getNom());
@@ -68,11 +74,12 @@ public class UtilisateurDAO {
             stmt.setString(4, utilisateur.getAdresse());
             stmt.setString(5, utilisateur.getPassword());
             stmt.setString(6, utilisateur.getRole());
-            stmt.setInt(6, utilisateur.getId());
+            
+            stmt.setInt(7, utilisateur.getId()); // Position corrigée (7 au lieu de 6)
+
             stmt.executeUpdate();
         }
     }
-
     
     // DELETE - Supprimer un utilisateur
     public void delete(int id) throws SQLException {
@@ -103,33 +110,35 @@ public class UtilisateurDAO {
                         rs.getString("email"),
                         rs.getString("telephone"),
                         rs.getString("adresse"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        rs.getString("role")
                 ));
             }
         }
         return utilisateurs;
     }
     public Utilisateur findByEmailAndPassword(String email, String password) throws SQLException {
-    	if (connection == null || connection.isClosed()) {
-    		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmalocator", "root", "");
-    	}
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmalocator", "root", "");
+        }
 
-    	String sql = "SELECT * FROM utilisateur WHERE email = ? AND password = ?";
+        String sql = "SELECT * FROM utilisateur WHERE email = ? AND password = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, email);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
+            
             if (rs.next()) {
                 return new Utilisateur(
-                        rs.getInt("id"),
-                        rs.getString("nom"),
-                        rs.getString("email")
-//                        2323,'kiffa', '    ',
-//                        rs.getString("telephone"),
-//                        rs.getString("adresse"),
-//                        rs.getString("password")
+                    rs.getInt("id"),
+                    rs.getString("nom"),
+                    rs.getString("email"),
+                    rs.getString("telephone"),
+                    rs.getString("adresse"),
+                    rs.getString("password")
                 );
             }
         }
-        return null; // Aucun utilisateur trouvé
-}}
+        return null;
+    }
+    }

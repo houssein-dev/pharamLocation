@@ -18,86 +18,63 @@ import dao.PharmacieDAO;
 import dao.PharmacienDAO;
 import dao.UtilisateurDAO;
 
-
-
 @WebServlet("/inscription")
 public class RegisterController extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
+    private static final long serialVersionUID = 1L;
 
-
-    public RegisterController() {
-        super();
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (Connection conn = DBConnection.getConnection()) {
+            // Charger la liste des pharmacies pour le formulaire pharmacien
+            PharmacieDAO pharmacieDAO = new PharmacieDAO(conn);
+            request.setAttribute("pharmacies", pharmacieDAO.getAll());
+            request.getRequestDispatcher("views/pages/auth/registre.jsp").forward(request, response);
+        } catch (SQLException e) {
+            throw new ServletException("Erreur de connexion à la base de données", e);
+        }
     }
 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String nom = request.getParameter("nom");
+        String email = request.getParameter("email");
+        String telephone = request.getParameter("telephone");
+        String adresse = request.getParameter("adresse");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+        String pharmacieIdParam = request.getParameter("pharmacie_id");
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    request.getRequestDispatcher("auth/registre.jsp").forward(request, response);
-
-	}
-
-
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		  String nom = request.getParameter("nom");
-	        String email = request.getParameter("email");
-	        String telephone = request.getParameter("telephone");
-	        String adresse = request.getParameter("adresse");
-	        String password = request.getParameter("password");
-            String role = request.getParameter("role");
-            System.out.println("Vous avez sélectionné l'option : " + role);
-
-			Pharmacien pharmacien=null;
-
-            Utilisateur utilisateur = null;
-
-            if (role != null) {
-                if (role.equals("1")) {
-                    System.out.println("from cond 1 : ");
-                    utilisateur = new Utilisateur(0, nom, email, telephone, adresse, password);
-                } else if (role.equals("2")) {
-                    System.out.println("from cond 2 : ");
-        	        pharmacien = new Pharmacien(0, nom, email, telephone, adresse, password, new Pharmacie(1, ""));
-
-                } else {
-                    System.out.println("from cond else : ");
-                    utilisateur = new Utilisateur(0, nom, email, telephone, adresse, password);
-                }
+        try (Connection conn = DBConnection.getConnection()) {
+            if ("pharmacien".equals(role)) {
+                // Enregistrement pharmacien
+                int pharmacieId = Integer.parseInt(pharmacieIdParam);
+                Pharmacie pharmacie = new PharmacieDAO(conn).read(pharmacieId);
+                
+                Pharmacien pharmacien = new Pharmacien(
+                    0, nom, email, telephone, adresse, password, pharmacie
+                );
+                
+                PharmacienDAO pharmacienDAO = new PharmacienDAO(conn);
+                pharmacienDAO.create(pharmacien);
+                
+                request.setAttribute("message", "Compte pharmacien créé avec succès !");
             } else {
-                // Si `role` est null, on attribue une valeur par défaut
-                System.out.println("Le rôle est null, affectation par défaut.");
-                utilisateur = new Utilisateur(0, nom, email, telephone, adresse, password);
+                // Enregistrement utilisateur normal
+                Utilisateur utilisateur = new Utilisateur(
+                    0, nom, email, telephone, adresse, password
+                );
+                utilisateur.setRole("utilisateur");
+                
+                UtilisateurDAO dao = new UtilisateurDAO(conn);
+                dao.create(utilisateur);
+                
+                request.setAttribute("message", "Compte utilisateur créé avec succès !");
             }
             
-
-	        System.out.print(utilisateur);
-	        if(utilisateur==null) {
-		     try (Connection conn = DBConnection.getConnection()) {
-		         
-
-		            PharmacienDAO pharmacienDAO = new PharmacienDAO(conn);
-					pharmacienDAO.create(pharmacien);
-		    	    request.getRequestDispatcher("auth/connect.jsp").forward(request, response);
-		        } catch (SQLException e) {
-		            throw new ServletException("Erreur lors de l'ajout du pharmacien", e);
-		        }
-	        }else {
-			        try (Connection conn = DBConnection.getConnection()) {
-			    			
-			            UtilisateurDAO dao = new UtilisateurDAO(conn);
-			                
-			            dao.create(utilisateur);
-			            request.setAttribute("message", "Compte créé avec succès !");
-			    	    request.getRequestDispatcher("auth/connect.jsp").forward(request, response);
-			        } catch (SQLException e) {
-			            e.printStackTrace();
-			            request.setAttribute("error", e);
-			    	    request.getRequestDispatcher("WEB-INF/views/utilisateur/error.jsp").forward(request, response);
-		
-			        }
-	        }
-	}
-
+    	    request.getRequestDispatcher("views/pages/auth/login.jsp").forward(request, response);
+            
+        } catch (SQLException | NumberFormatException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Erreur lors de la création du compte: " + e.getMessage());
+            request.getRequestDispatcher("views/pages/auth/registre.jsp").forward(request, response);
+        }
+    }
 }

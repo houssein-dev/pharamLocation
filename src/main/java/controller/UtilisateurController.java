@@ -20,13 +20,12 @@ public class UtilisateurController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        Connection connection = null;
         try {
-            connection = DBConnection.getConnection();
+            Connection connection = DBConnection.getConnection();
+            utilisateurDAO = new UtilisateurDAO(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new ServletException("Erreur de connexion à la base de données", e);
         }
-        utilisateurDAO = new UtilisateurDAO(connection);
     }
 
     @Override
@@ -36,70 +35,83 @@ public class UtilisateurController extends HttpServlet {
 
         if ("PUT".equalsIgnoreCase(method)) {
             doPut(request, response);
+            return;
         }
+
         try {
-            if (idParam != null) {
+            if (idParam != null && !idParam.isEmpty()) {
                 int id = Integer.parseInt(idParam);
                 Utilisateur utilisateur = utilisateurDAO.read(id);
-                request.setAttribute("utilisateur", utilisateur);
-                request.setAttribute("id", id);
+                if (utilisateur != null) {
+                    request.setAttribute("utilisateur", utilisateur);
+                    request.getRequestDispatcher("views/pages/dashboard/editutilisateur.jsp").forward(request, response);
 
-
+                } else {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Utilisateur non trouvé");
+                }
             } else {
                 List<Utilisateur> utilisateurs = utilisateurDAO.getAll();
                 request.setAttribute("utilisateurs", utilisateurs);
-                request.getRequestDispatcher("/utilisateur/listutilisateur.jsp").forward(request, response);
+                request.getRequestDispatcher("views/pages/dashboard/utilisateurs.jsp").forward(request, response);
+
             }
-        } catch (SQLException e) {
+        } catch (SQLException | NumberFormatException e) {
             throw new ServletException("Erreur lors de la récupération des utilisateurs", e);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Gestion de la méthode HTTP personnalisée
         String method = request.getParameter("_method");
         if ("PUT".equalsIgnoreCase(method)) {
             doPut(request, response);
+            return;
         } else if ("DELETE".equalsIgnoreCase(method)) {
             doDelete(request, response);
-        } else {
-            String nom = request.getParameter("nom");
-            String email = request.getParameter("email");
-            String telephone = request.getParameter("telephone");
-            String adresse = request.getParameter("adresse");
-            String password = request.getParameter("password");
-
-            Utilisateur utilisateur = new Utilisateur(0, nom, email, telephone, adresse, password);
-            try {
-                utilisateurDAO.create(utilisateur);
-                response.sendRedirect("utilisateur");
-            } catch (SQLException e) {
-                throw new ServletException("Erreur lors de l'ajout de l'utilisateur", e);
-            }
-        }
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	String idParam = request.getParameter("id");
-        
-        if (idParam == null || idParam.trim().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "L'ID est manquant ou invalide.");
             return;
         }
 
-        int id = Integer.parseInt(idParam);
         String nom = request.getParameter("nom");
         String email = request.getParameter("email");
         String telephone = request.getParameter("telephone");
         String adresse = request.getParameter("adresse");
         String password = request.getParameter("password");
+        String role = request.getParameter("role");
 
-        Utilisateur utilisateur = new Utilisateur(id, nom, email, telephone, adresse, password);
+        Utilisateur utilisateur = new Utilisateur(0, nom, email, telephone, adresse, password, role);
         try {
+            utilisateurDAO.create(utilisateur);
+            response.sendRedirect("utilisateur");
+        } catch (SQLException e) {
+            throw new ServletException("Erreur lors de l'ajout de l'utilisateur", e);
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String idParam = request.getParameter("id");
+        if (idParam == null || idParam.trim().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID manquant");
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(idParam);
+            String nom = request.getParameter("nom");
+            String email = request.getParameter("email");
+            String telephone = request.getParameter("telephone");
+            String adresse = request.getParameter("adresse");
+            String password = request.getParameter("password");
+            String role = request.getParameter("role");
+
+
+            Utilisateur utilisateur = new Utilisateur(id, nom, email, telephone,password, adresse, role);
+            System.out.println("utilisateur");
+            System.out.println(utilisateur);
             utilisateurDAO.update(utilisateur);
             response.sendRedirect("utilisateur");
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID invalide");
         } catch (SQLException e) {
             throw new ServletException("Erreur lors de la mise à jour de l'utilisateur", e);
         }
@@ -107,10 +119,18 @@ public class UtilisateurController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
+        String idParam = request.getParameter("id");
+        if (idParam == null || idParam.trim().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID manquant");
+            return;
+        }
+
         try {
+            int id = Integer.parseInt(idParam);
             utilisateurDAO.delete(id);
             response.sendRedirect("utilisateur");
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID invalide");
         } catch (SQLException e) {
             throw new ServletException("Erreur lors de la suppression de l'utilisateur", e);
         }

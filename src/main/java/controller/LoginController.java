@@ -31,58 +31,44 @@ public class LoginController extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-	    request.getRequestDispatcher("auth/connect.jsp").forward(request, response);
+	    request.getRequestDispatcher("views/pages/auth/login.jsp").forward(request, response);
 	}
 
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-    	System.out.printf("=========password from page jsp =======", email);
-
-		try (Connection conn = DBConnection.getConnection()) {
-			
+        
+        try (Connection conn = DBConnection.getConnection()) {
             UtilisateurDAO dao = new UtilisateurDAO(conn);
             Utilisateur utilisateur = dao.findByEmailAndPassword(email, password);
             
             PharmacienDAO daoPh = new PharmacienDAO(conn);            
             Pharmacien pharmacien = daoPh.findByEmailAndPassword(email, password);
+            
             if (utilisateur != null) {
-            	
                 HttpSession session = request.getSession();
                 session.setAttribute("utilisateur", utilisateur);
-                session.setAttribute("role", utilisateur.getRole());
-
-        	    request.getRequestDispatcher("/main").forward(request, response);
-        	    
-        	    
-            }else if (pharmacien != null) {
-            	
-
+                session.setAttribute("role", "utilisateur");
+                response.sendRedirect(request.getContextPath() + "/main"); 
+                
+            } else if (pharmacien != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("pharmacien", pharmacien);
-                session.setAttribute("role", pharmacien.getRole());
+                session.setAttribute("role", "pharmacien");
                 session.setAttribute("pharmacieId", pharmacien.getPharmacie().getId());
-                //session.setAttribute("roel", "pharmacien");
-        	    request.getRequestDispatcher("/main").forward(request, response);
-        	    System.out.println("pharmacien exist");
-        	    
-            }  else {
-            	
+                response.sendRedirect(request.getContextPath() + "/main"); 
+                
+            } else {
                 request.setAttribute("error", "Email ou mot de passe incorrect !");
-        	    request.getRequestDispatcher("auth/connect.jsp").forward(request, response);
-        	    
+                request.setAttribute("email", email); 
+        	    request.getRequestDispatcher("views/pages/auth/login.jsp").forward(request, response);
             }
             
-        }catch (SQLException e) {
-        	
-        	e.printStackTrace();
-            request.setAttribute("error", e);
-    	    request.getRequestDispatcher("WEB-INF/views/utilisateur/error.jsp").forward(request, response);
-    	    
+        } catch (SQLException e) {
+            request.setAttribute("error", "Erreur technique. Veuillez réessayer plus tard.");
+    	    request.getRequestDispatcher("views/pages/auth/login.jsp").forward(request, response);
         }	
-	}
-
+    }
 	
 }

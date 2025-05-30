@@ -42,8 +42,8 @@ public class MedicamentController extends HttpServlet {
                 request.getRequestDispatcher("medicament/medicamentDetail.jsp").forward(request, response);
             }else if(search != null){
             	System.out.printf("========== from search validation ===========",search);
-            	List<Medicament> medicaments = medicamentDAO.search(search);
-                request.setAttribute("medicaments", medicaments);
+//            	List<Medicament> medicaments = medicamentDAO.search(search);
+//                request.setAttribute("medicaments", medicaments);
 
                 request.getRequestDispatcher("medicament/search.jsp").forward(request, response);
 
@@ -106,14 +106,14 @@ public class MedicamentController extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        try {
-            medicamentDAO.delete(id);
-            response.sendRedirect("/PharmLocation/medicament");
-        } catch (SQLException e) {
-            throw new ServletException("Erreur lors de la suppression du médicament", e);
-        }
-    }
+//    @Override
+//    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        int id = Integer.parseInt(request.getParameter("id"));
+//        try {
+//            medicamentDAO.delete(id);
+//            response.sendRedirect("/PharmLocation/medicament");
+//        } catch (SQLException e) {
+//            throw new ServletException("Erreur lors de la suppression du médicament", e);
+//        }
+//    }
 }
